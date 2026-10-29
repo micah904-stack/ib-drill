@@ -1,0 +1,479 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>IB Technicals Drill</title>
+<meta name="description" content="Shuffled flashcards for investment banking technical and fit interviews.">
+<meta name="theme-color" content="#13202A">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="favicon.ico" sizes="48x48">
+<link rel="icon" href="icons/icon-192.png" type="image/png" sizes="192x192">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: one working column — filter strip, the card, verdict buttons, ledger of progress. Pitchbook ink on cool paper. */
+:root{
+  --paper:#F3F5F4; --sheet:#FFFFFF; --ink:#13202A; --muted:#5B6873; --rule:#D6DCDF;
+  --accent:#1D4ED8; --accent-soft:#E3EAFB; --good:#13795B; --good-soft:#DDF1E8; --warn:#B4540A; --warn-soft:#FBEBDC;
+  --f-display:"Archivo",system-ui,sans-serif; --f-body:"Source Serif 4",Georgia,serif; --f-mono:"JetBrains Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#0E151B; --sheet:#16212A; --ink:#E6ECEF; --muted:#93A1AB; --rule:#2A3843;
+  --accent:#7EA2FF; --accent-soft:#1C2A4A; --good:#4CC79A; --good-soft:#123328; --warn:#F0A060; --warn-soft:#3A2614; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#0E151B; --sheet:#16212A; --ink:#E6ECEF; --muted:#93A1AB; --rule:#2A3843;
+  --accent:#7EA2FF; --accent-soft:#1C2A4A; --good:#4CC79A; --good-soft:#123328; --warn:#F0A060; --warn-soft:#3A2614; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.55;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 48px}
+.wrap{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px;border-bottom:2px solid var(--ink);padding-bottom:12px}
+h1{font-family:var(--f-display);font-weight:800;font-size:clamp(26px,5vw,34px);letter-spacing:-.02em;margin:0;line-height:1;text-wrap:balance}
+h1 span{color:var(--accent)}
+.sub{font-family:var(--f-display);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:6px}
+.deckswitch{display:flex;border:1px solid var(--rule);border-radius:6px;overflow:hidden}
+.deckswitch button{border:0;background:var(--sheet);color:var(--muted);font:600 13px var(--f-display);padding:8px 12px;cursor:pointer}
+.deckswitch button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.label{font:600 11px var(--f-display);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--rule);background:var(--sheet);color:var(--ink);font:500 13px var(--f-display);padding:6px 10px;border-radius:999px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+.chip small{font-family:var(--f-mono);font-size:11px;color:var(--muted);margin-left:4px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+select,.btn{font:600 13px var(--f-display);border:1px solid var(--rule);background:var(--sheet);color:var(--ink);padding:8px 12px;border-radius:6px;cursor:pointer}
+.btn:hover,select:hover{border-color:var(--ink)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.card{background:var(--sheet);border:1px solid var(--rule);border-radius:10px;box-shadow:0 1px 0 var(--rule),0 12px 30px -18px rgba(0,0,0,.35);
+  min-height:300px;display:flex;flex-direction:column;cursor:pointer;position:relative;overflow:hidden}
+.card-head{display:flex;justify-content:space-between;gap:8px;padding:14px 20px;border-bottom:1px dashed var(--rule);font:500 12px var(--f-mono);color:var(--muted)}
+.card-head .tag{font:700 11px var(--f-display);letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}
+.diff{padding:2px 8px;border-radius:4px;background:var(--paper);font:600 11px var(--f-display);letter-spacing:.06em;text-transform:uppercase}
+.diff.adv{background:var(--warn-soft);color:var(--warn)}
+.q{font-family:var(--f-display);font-weight:700;font-size:clamp(19px,3.4vw,23px);line-height:1.3;padding:22px 20px 8px;text-wrap:balance;margin:0}
+.a{padding:4px 20px 22px;min-width:0}
+.a p{margin:.5em 0}
+.a ul{margin:.4em 0;padding-left:1.2em}
+.hint{margin:auto 20px 18px;font:500 13px var(--f-display);color:var(--muted)}
+.state{position:absolute;top:0;left:0;width:4px;height:100%;background:transparent}
+.state.known{background:var(--good)} .state.review{background:var(--warn)}
+.frac{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;font-size:.92em;margin:0 .2em}
+.frac>span:first-child{border-bottom:1px solid currentColor;padding:0 .3em}
+.frac>span:last-child{padding:0 .3em}
+.formula{font-family:var(--f-body);background:var(--paper);border-radius:6px;padding:10px 12px;margin:.6em 0;overflow-x:auto}
+.verdict{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.verdict button{font:700 15px var(--f-display);padding:14px;border-radius:8px;cursor:pointer;border:1px solid}
+.v-review{background:var(--warn-soft);border-color:var(--warn);color:var(--warn)}
+.v-known{background:var(--good-soft);border-color:var(--good);color:var(--good)}
+.nav{display:flex;gap:8px;justify-content:space-between;align-items:center}
+.counter{font:600 14px var(--f-mono);font-variant-numeric:tabular-nums}
+.ledger{display:flex;flex-direction:column;gap:6px}
+.bar{height:10px;border-radius:5px;background:var(--rule);display:flex;overflow:hidden}
+.bar i{display:block;height:100%}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font:500 13px var(--f-display);color:var(--muted);font-variant-numeric:tabular-nums}
+.legend b{font-family:var(--f-mono);color:var(--ink)}
+.dot{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px;vertical-align:middle}
+.keys{font:400 12px var(--f-mono);color:var(--muted)}
+kbd{font:600 11px var(--f-mono);border:1px solid var(--rule);border-bottom-width:2px;border-radius:4px;padding:1px 5px;background:var(--sheet)}
+details{background:var(--sheet);border:1px solid var(--rule);border-radius:8px;padding:12px 16px}
+summary{font:700 14px var(--f-display);cursor:pointer}
+textarea{width:100%;min-height:180px;font:13px/1.5 var(--f-mono);background:var(--paper);color:var(--ink);border:1px solid var(--rule);border-radius:6px;padding:10px;margin-top:10px}
+.small{font-size:14px;color:var(--muted)}
+.small code{font-family:var(--f-mono);font-size:12px;background:var(--paper);padding:1px 4px;border-radius:3px}
+.msg{font:600 13px var(--f-display);color:var(--good);min-height:1.2em}
+.msg.err{color:var(--warn)}
+.primary{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.pdfdrop{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-top:12px}
+.visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.pdfdrop:focus-within label{outline:2px solid var(--accent);outline-offset:2px}
+.meter{height:6px;border-radius:3px;background:var(--rule);overflow:hidden;margin-top:10px}
+.meter i{display:block;height:100%;width:0;background:var(--accent);transition:width .2s}
+.groups{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.groups .chip{border-radius:6px;font-weight:700}
+.empty{padding:40px 20px;text-align:center;color:var(--muted);font-family:var(--f-display)}
+@media (max-width:480px){.card{min-height:260px}.q{padding:18px 16px 6px}.a{padding:4px 16px 18px}.card-head{padding:12px 16px}}
+@media (prefers-reduced-motion:no-preference){.card{transition:transform .15s}.card:active{transform:scale(.995)}}
+</style>
+</head>
+<body>
+
+
+<div class="wrap">
+  <header>
+    <div>
+      <h1>IB Technicals <span>Drill</span></h1>
+      <div class="sub" id="deckLine">Starter bank · 64 original questions</div>
+    </div>
+    <div class="deckswitch" role="group" aria-label="Question bank">
+      <button id="deckCore" aria-pressed="true">Starter bank</button>
+      <button id="deckMine" aria-pressed="false">My 400</button>
+    </div>
+  </header>
+
+  <section>
+    <div class="label" style="margin-bottom:8px">Sections</div>
+    <div class="groups" id="groups" hidden></div>
+    <div class="chips" id="chips"></div>
+  </section>
+
+  <div class="row">
+    <label class="label" for="mode">Show
+      <select id="mode" style="margin-left:6px">
+        <option value="all">All questions</option>
+        <option value="unseen">Not yet rated</option>
+        <option value="review">Review pile only</option>
+        <option value="adv">Advanced only</option>
+      </select>
+    </label>
+    <button class="btn" id="shuffle">Shuffle deck</button>
+  </div>
+
+  <article class="card" id="card" tabindex="0" aria-live="polite">
+    <div class="state" id="stateBar"></div>
+    <div class="card-head"><span class="tag" id="cTag"></span><span id="cMeta"></span></div>
+    <h2 class="q" id="cQ"></h2>
+    <div class="a" id="cA" hidden></div>
+    <div class="hint" id="cHint">Say your answer out loud, then tap the card to check it.</div>
+  </article>
+
+  <div class="verdict">
+    <button class="v-review" id="btnReview">Review again</button>
+    <button class="v-known" id="btnKnown">Got it</button>
+  </div>
+
+  <div class="nav">
+    <button class="btn" id="prev">← Prev</button>
+    <span class="counter" id="counter">1 / 64</span>
+    <button class="btn" id="next">Next →</button>
+  </div>
+  <div class="keys"><kbd>Space</kbd> flip · <kbd>←</kbd><kbd>→</kbd> move · <kbd>1</kbd> review · <kbd>2</kbd> got it · <kbd>S</kbd> shuffle</div>
+
+  <section class="ledger">
+    <div class="label">Progress in this bank</div>
+    <div class="bar" id="bar"></div>
+    <div class="legend" id="legend"></div>
+    <div><button class="btn" id="reset">Reset progress</button> <span id="resetConfirm" hidden><button class="btn" id="resetYes">Yes, clear it</button> <button class="btn" id="resetNo">Cancel</button></span></div>
+  </section>
+
+  <details id="importBox">
+    <summary>Load your copy of the 400 questions</summary>
+    <div class="pdfdrop">
+      <label class="btn primary" for="pdfFile">Choose the guide PDF</label>
+      <input type="file" id="pdfFile" accept="application/pdf,.pdf" class="visually-hidden">
+      <span class="small" id="pdfStatus">Your PDF is read right here in your browser and never uploaded anywhere.</span>
+    </div>
+    <div class="meter" id="pdfMeter" hidden><i id="pdfMeterFill"></i></div>
+    <p class="small" style="margin-top:14px">Or paste questions from any other source. Two formats work:</p>
+    <p class="small"><b>Blocks</b> separated by a blank line, with an optional section line:<br>
+      <code>Section: DCF</code><br><code>Q: Walk me through a DCF.</code><br><code>A: First you project free cash flow…</code></p>
+    <p class="small"><b>Spreadsheet rows</b> copied from Excel or Sheets, tab-separated: <code>Section⇥Question⇥Answer</code> or <code>Question⇥Answer</code>.</p>
+    <textarea id="importText" placeholder="Section: Accounting&#10;Q: Walk me through the three financial statements.&#10;A: ..."></textarea>
+    <div class="row" style="margin-top:10px">
+      <span class="msg" id="importMsg"></span>
+      <span style="display:flex;gap:8px"><button class="btn" id="clearMine">Clear my bank</button><button class="btn primary" id="doImport">Add pasted questions</button></span>
+    </div>
+    <p class="small">Your bank stays in this browser only.</p>
+  </details>
+</div>
+
+<script>
+const F=(n,d)=>`<span class="frac"><span>${n}</span><span>${d}</span></span>`;
+const CORE=[
+// ACCOUNTING
+["Accounting","b","Walk me through the three financial statements.","<p>The <b>income statement</b> shows revenue, expenses and net income over a period. The <b>balance sheet</b> is a snapshot of assets, liabilities and equity at a point in time, and assets must equal liabilities plus equity. The <b>cash flow statement</b> starts with net income, adjusts for non-cash items and working capital changes (operating), then adds investing and financing flows to get the net change in cash.</p>"],
+["Accounting","b","How do the three statements link together?","<p>Net income flows to the top of the cash flow statement and into retained earnings on the balance sheet. Non-cash items and working capital changes on the CFS reconcile net income to cash. The ending cash balance on the CFS becomes cash on the balance sheet, and changes in PP&E, debt and equity on the CFS match the balance sheet movements.</p>"],
+["Accounting","b","Depreciation goes up by $10. Walk it through the statements (40% tax rate).","<ul><li><b>IS:</b> operating income down $10, taxes down $4, net income down $6.</li><li><b>CFS:</b> net income −$6, add back $10 depreciation, cash up $4.</li><li><b>BS:</b> cash +$4, PP&E −$10, assets −$6. Retained earnings −$6, so it balances.</li></ul>"],
+["Accounting","b","Which single statement would you pick to judge a company, and why?","<p>The cash flow statement. It shows how much cash the business actually generates and spends, which accrual accounting can obscure. If you get two, take the income statement and the balance sheet, because you can build the cash flow statement from them.</p>"],
+["Accounting","b","A company buys $100 of inventory with cash. What changes?","<p>No change on the income statement. On the CFS, the increase in inventory is a working capital use, so cash from operations falls $100. On the balance sheet, cash falls $100 and inventory rises $100, so total assets are unchanged.</p>"],
+["Accounting","b","That inventory is sold for $150. Walk it through (40% tax).","<ul><li><b>IS:</b> revenue +$150, COGS +$100, pre-tax income +$50, net income +$30.</li><li><b>CFS:</b> net income +$30, inventory decrease +$100, cash +$130.</li><li><b>BS:</b> cash +$130, inventory −$100, assets +$30. Retained earnings +$30.</li></ul>"],
+["Accounting","b","What is working capital, and what does a negative figure tell you?","<p>Working capital is current assets minus current liabilities; bankers usually mean the operating version that excludes cash and debt. Negative working capital is normal for businesses that collect cash before they pay suppliers, such as retailers and subscription companies. It becomes a concern only when it signals the company can't meet near-term obligations.</p>"],
+["Accounting","a","How does a $100 write-down of PP&E flow through (40% tax)?","<p>Pre-tax income falls $100, net income falls $60. On the CFS, add back the $100 non-cash charge, so cash is up $40 (tax savings). On the balance sheet, cash +$40, PP&E −$100, assets −$60; retained earnings −$60.</p>"],
+["Accounting","a","What is a deferred tax liability and how does one arise?","<p>A DTL arises when a company's book taxes exceed the cash taxes it actually pays now, meaning it will pay more cash tax later. The classic cause is accelerated depreciation for tax purposes versus straight-line on the books. In M&A, asset write-ups in a stock deal also create DTLs because the higher book depreciation is not tax-deductible.</p>"],
+["Accounting","a","Accrued compensation of $10 is recorded. Walk it through (40% tax).","<p>Operating expenses rise $10, net income falls $6. On the CFS, accrued compensation is a liability increase, so add $10 back: cash +$4. Balance sheet: cash +$4; accrued comp +$10 on liabilities, retained earnings −$6. Both sides rise $4.</p>"],
+["Accounting","b","Why do we add back depreciation on the cash flow statement?","<p>Depreciation reduces net income but no cash leaves the business that period; the cash went out when the asset was purchased, which appears as CapEx in investing activities. Adding it back avoids counting that cost twice.</p>"],
+["Accounting","a","What happens when a company issues $100 of debt and buys $100 of PP&E?","<p>No immediate income statement impact. CFS: CapEx −$100 in investing, debt issuance +$100 in financing, net cash change zero. Balance sheet: PP&E +$100 and debt +$100. Later periods carry depreciation and interest expense.</p>"],
+// EV
+["Enterprise & Equity Value","b","What's the difference between enterprise value and equity value?","<p>Equity value is what the company is worth to common shareholders only. Enterprise value is the value of the core operations to all capital providers: debt, preferred, noncontrolling interests and equity. EV is capital-structure neutral, which makes it better for comparing companies.</p>"],
+["Enterprise & Equity Value","b","How do you get from equity value to enterprise value?","<div class='formula'>EV = Equity value + Debt + Preferred stock + Noncontrolling interests − Cash and non-operating assets</div><p>Add claims from other investors, subtract assets that aren't part of core operations.</p>"],
+["Enterprise & Equity Value","b","Why do you subtract cash when calculating enterprise value?","<p>Cash is a non-operating asset. An acquirer effectively gets it back when it buys the company, so it reduces the net cost of the operations. Enterprise value measures only what the core business is worth.</p>"],
+["Enterprise & Equity Value","b","Can a company's enterprise value be negative?","<p>Yes, if cash exceeds equity value plus debt and other claims. It happens with distressed or cash-rich companies trading at depressed prices, often because the market expects the cash to be burned.</p>"],
+["Enterprise & Equity Value","a","How do you calculate diluted shares with the treasury stock method?","<p>For each tranche of in-the-money options, assume holders exercise and the company receives strike × number of options. The company uses that cash to repurchase shares at the current price. Net new shares = options − (strike × options) ÷ share price. Add this to basic shares.</p>"],
+["Enterprise & Equity Value","a","A company issues $100 of new shares. What happens to equity value and EV?","<p>Equity value rises $100 because there are more shares outstanding. Cash also rises $100, so the subtraction for cash offsets it and enterprise value is unchanged.</p>"],
+["Enterprise & Equity Value","a","Which metrics pair with EV, and which pair with equity value?","<p>Match the numerator to the investors the metric serves. EV pairs with metrics before interest, available to all investors: revenue, EBITDA, EBIT, unlevered FCF. Equity value pairs with metrics after interest: net income, EPS, levered FCF. EV/Revenue and P/E are correct; EV/Net income is not.</p>"],
+["Enterprise & Equity Value","b","Why add noncontrolling interests to enterprise value?","<p>If a parent owns more than 50% of a subsidiary, it consolidates 100% of that sub's revenue and EBITDA. To keep the multiple consistent, EV must also include the 100% value, so add the portion owned by other investors.</p>"],
+["Enterprise & Equity Value","a","Do you use book or market value of debt when calculating EV?","<p>Market value in theory, because EV reflects what an acquirer would actually pay. In practice the book value is usually close enough and is used unless the debt trades well away from par, such as in distressed situations.</p>"],
+["Enterprise & Equity Value","a","Should operating leases count as debt in EV?","<p>Under current accounting standards, leases sit on the balance sheet as liabilities. Whether to add them depends on consistency: if you add lease liabilities to EV, use EBITDA before lease expense (EBITDAR-style). If you don't, use EBITDA after rent. Mixing the two distorts the multiple.</p>"],
+// VALUATION
+["Valuation","b","What are the main methodologies for valuing a company?","<p>Comparable public companies, precedent transactions and the DCF are the core three. LBO analysis, sum-of-the-parts, liquidation value and dividend discount models are used in specific situations.</p>"],
+["Valuation","b","Rank the three core methods from highest to lowest valuation.","<p>There's no fixed ranking. Precedent transactions often come out highest because they include a control premium. A DCF can land anywhere because it depends heavily on assumptions. Comps are usually the most market-grounded but reflect current sentiment.</p>"],
+["Valuation","b","How do you pick comparable companies?","<p>Screen on industry, geography and size (revenue, EBITDA or market cap), then refine by business model, growth and margins. You want a set of roughly five to fifteen companies that the market would actually treat as peers.</p>"],
+["Valuation","b","Why would you use EV/EBITDA over P/E?","<p>EV/EBITDA is independent of capital structure, tax rates and depreciation policy, so it compares businesses more cleanly. P/E is affected by leverage and non-cash charges, and it's meaningless for companies with negative earnings.</p>"],
+["Valuation","b","When would a DCF be a poor choice?","<p>When cash flows are hard to forecast: early-stage or unprofitable companies, highly cyclical businesses, or companies in distress. Banks and insurers are also poor fits because their debt is part of operations.</p>"],
+["Valuation","a","How would you value a company with negative EBITDA?","<p>Use revenue multiples, or multiples on forward metrics when they turn positive. Industry-specific metrics help, such as EV per subscriber or per user. A DCF can still work with a long enough forecast to reach steady profitability, though it's very assumption-heavy.</p>"],
+["Valuation","a","How do you value a bank differently?","<p>Debt is raw material for a bank, so EV metrics don't work. Use equity value metrics: P/E, P/BV and P/TBV, alongside ROE. Intrinsic value comes from a dividend discount model rather than a free cash flow DCF.</p>"],
+["Valuation","b","Why do precedent transactions usually show higher multiples than comps?","<p>Acquirers pay a control premium, and they price in synergies they expect to capture. Public trading comps reflect minority stakes with no control.</p>"],
+["Valuation","a","What's a sum-of-the-parts valuation and when is it used?","<p>You value each business segment separately, with its own multiples or DCF, then add them up and subtract net debt at the parent. It's used for conglomerates whose divisions have very different growth and margin profiles.</p>"],
+["Valuation","b","What is a football field chart?","<p>A horizontal bar chart showing the valuation range from each methodology side by side, often with the current share price or offer price marked. It's how bankers present the range of value to a client.</p>"],
+// DCF
+["DCF","b","Walk me through a DCF.","<p>Project unlevered free cash flow for five to ten years. Calculate a terminal value with the Gordon Growth or exit multiple method. Discount both back to present value at WACC. The sum is enterprise value; subtract net debt and other claims to reach equity value, then divide by diluted shares for a per-share value.</p>"],
+["DCF","b","How do you calculate unlevered free cash flow?","<div class='formula'>UFCF = EBIT × (1 − tax rate) + D&A − Change in NWC − CapEx</div><p>It's the cash available to all investors before interest payments.</p>"],
+["DCF","b","How do you calculate WACC?","<div class='formula'>WACC = Cost of equity × % equity + Cost of debt × (1 − t) × % debt + Cost of preferred × % preferred</div><p>Weights use market values, and debt cost is tax-effected because interest is deductible.</p>"],
+["DCF","b","How do you calculate cost of equity?","<p>Using CAPM:</p><div class='formula'>Cost of equity = Risk-free rate + β × Equity risk premium</div><p>Beta measures how volatile the stock is relative to the market.</p>"],
+["DCF","a","How do you unlever and relever beta?","<p>Unlever each comparable's beta to strip out its capital structure:</p><div class='formula'>β<sub>U</sub> = "+F("β<sub>L</sub>","1 + (1 − t) × "+F("D","E"))+"</div><p>Take the median unlevered beta, then relever at your company's target structure: β<sub>L</sub> = β<sub>U</sub> × (1 + (1 − t) × D/E).</p>"],
+["DCF","b","How do you calculate terminal value with the Gordon Growth method?","<div class='formula'>TV = "+F("FCF<sub>n</sub> × (1 + g)","WACC − g")+"</div><p>The growth rate g should stay below long-run GDP growth, since no company outgrows the economy forever.</p>"],
+["DCF","b","Gordon Growth or exit multiple: which is better?","<p>Exit multiples are easier to defend with market data but import today's valuation into the future. Gordon Growth is more theoretically sound but very sensitive to small changes in g. Bankers often run both and use each to sanity-check the other via the implied multiple or implied growth rate.</p>"],
+["DCF","a","How do you discount cash flows to present value?","<div class='formula'>PV = "+F("CF<sub>t</sub>","(1 + WACC)<sup>t</sup>")+"</div><p>With the mid-year convention, use t − 0.5 for the discrete cash flows to reflect cash arriving through the year.</p>"],
+["DCF","a","What is the mid-year convention and how does it change terminal value discounting?","<p>It assumes cash flows arrive mid-year rather than at year-end, which raises value slightly. For Gordon Growth TV, also discount using the mid-year period (n − 0.5). For an exit multiple TV, keep the full period n because the multiple is applied at year-end.</p>"],
+["DCF","b","What typically drives most of a DCF's value?","<p>The terminal value, often 60% to 80% of enterprise value. That's why the terminal growth rate and exit multiple deserve close scrutiny and a sensitivity table.</p>"],
+["DCF","a","Would you rather have a 10% increase in revenue or a 1% decrease in discount rate?","<p>It depends on the numbers, but for most companies a 1% drop in WACC adds more value, because it raises the present value of every year including the terminal value. Show it with a sensitivity table rather than asserting it.</p>"],
+["DCF","a","How would a levered DCF differ from an unlevered one?","<p>Use levered FCF, which is after interest and debt repayments, and discount at the cost of equity rather than WACC. The result is equity value directly, so you don't subtract net debt.</p>"],
+// M&A
+["M&A","b","Walk me through a merger model.","<p>Project both companies' financials. Set the purchase price and the mix of cash, debt and stock. Build sources and uses, then the purchase price allocation and new goodwill. Combine the income statements with adjustments for foregone interest on cash, new interest on debt, new shares issued, synergies and amortization of written-up assets. Compare pro forma EPS to the buyer's standalone EPS.</p>"],
+["M&A","b","What makes a deal accretive or dilutive?","<p>Accretive if pro forma EPS is higher than the buyer's standalone EPS, dilutive if lower. A quick test: compare the seller's earnings yield at the purchase price to the buyer's weighted after-tax cost of acquisition funding.</p>"],
+["M&A","a","Buyer P/E of 20x, seller bought at 10x, all stock. Accretive or dilutive?","<p>Accretive. The buyer's cost of stock is its earnings yield, 1 ÷ 20 = 5%. The seller's yield at purchase is 1 ÷ 10 = 10%. You're acquiring earnings more cheaply than the cost of the currency, ignoring synergies and fees.</p>"],
+["M&A","b","Why would a company pay with stock instead of cash?","<p>It may not have enough cash or debt capacity, its stock may be richly valued, or it wants the seller's shareholders to share the risk. Stock deals also let sellers defer taxes in some structures.</p>"],
+["M&A","b","What's goodwill and how is it created?","<p>Goodwill is the purchase price minus the fair value of the target's identifiable net assets after write-ups. It represents value the buyer paid for that isn't tied to specific assets, like brand, workforce and expected synergies. It isn't amortized; it's tested for impairment.</p>"],
+["M&A","a","What's the difference between a stock deal and an asset deal for tax purposes?","<p>In a stock purchase the buyer acquires the shares, keeps the target's tax basis and gets no new tax-deductible depreciation on write-ups, which creates a DTL. In an asset purchase (or a 338(h)(10) election), the tax basis steps up, so write-ups are tax-deductible. Sellers usually prefer stock deals; buyers prefer asset deals.</p>"],
+["M&A","b","What are revenue synergies vs. cost synergies?","<p>Cost synergies come from eliminating overlap: headcount, facilities, procurement. Revenue synergies come from cross-selling or pricing power. Buyers and investors trust cost synergies more because they're under management's control.</p>"],
+["M&A","a","Why might an acquirer pay more than the target is worth on a standalone basis?","<p>Synergies, strategic positioning, competitive pressure in an auction, or the value of control itself. The premium is justified only if the present value of synergies exceeds it.</p>"],
+["M&A","b","What's a contribution analysis?","<p>It compares how much revenue, EBITDA and net income each company contributes to the combined entity against each side's ownership after the deal. It's used in stock mergers to judge whether the exchange ratio is fair.</p>"],
+["M&A","a","What does an exchange ratio represent in a stock deal?","<p>The number of buyer shares issued for each target share. A fixed exchange ratio means the deal value moves with the buyer's share price; a fixed price means the number of shares issued adjusts instead.</p>"],
+// LBO
+["LBO","b","Walk me through a basic LBO model.","<p>Set the purchase price and the debt and equity funding. Build sources and uses. Project the company's financials and free cash flow, use it to pay down debt, and model interest. At exit, apply a multiple to EBITDA, subtract remaining net debt to get exit equity, and calculate IRR and the multiple of money on the sponsor's equity.</p>"],
+["LBO","b","Why do private equity firms use leverage?","<p>Debt reduces the equity check, which magnifies returns on equity if the business performs. Interest is tax-deductible, and paying debt down with company cash flow builds equity value over the hold period.</p>"],
+["LBO","b","What makes a good LBO candidate?","<p>Stable, predictable cash flow; low CapEx needs; a strong market position; opportunities to cut costs; a reasonable purchase price; a clear exit path; and solid management.</p>"],
+["LBO","b","What are the main drivers of returns in an LBO?","<p>EBITDA growth, multiple expansion between entry and exit, and debt paydown. Paying a lower entry price and using more leverage also raise returns, with more risk.</p>"],
+["LBO","a","A PE firm doubles its money in 5 years. Roughly what's the IRR?","<p>About 15%. Rule of 72: 72 ÷ 5 ≈ 14.4%. Precisely, IRR = 2<sup>1/5</sup> − 1 ≈ 14.9%. Benchmarks: 2x in 3 years ≈ 26%, 3x in 5 years ≈ 25%.</p>"],
+["LBO","a","Quick LBO: buy at $100M EBITDA × 10x, 60% debt, EBITDA grows to $130M, exit at 10x, $200M debt repaid. IRR over 5 years?","<p>Entry EV $1,000M; debt $600M; equity $400M. Exit EV $1,300M; remaining debt $400M; exit equity $900M. Multiple 2.25x over 5 years, IRR roughly 17 to 18% (2.25<sup>1/5</sup> − 1 ≈ 17.6%).</p>"],
+["LBO","b","What types of debt show up in an LBO?","<p>Senior secured term loans and revolvers (cheapest, amortizing, maintenance covenants), then senior notes and subordinated or mezzanine debt (higher rates, bullet maturity, looser covenants, sometimes PIK interest).</p>"],
+["LBO","a","Why might a sponsor accept a lower IRR for a higher multiple of money?","<p>IRR rewards speed, but a fund can only invest each dollar once. A longer hold that turns $1 into $3 can create more absolute profit than a quick flip at 2x with a higher IRR, especially if the firm has no better place to redeploy the capital.</p>"],
+["LBO","a","What's a dividend recapitalization?","<p>The company takes on new debt and pays the proceeds to the sponsor as a dividend. It returns cash early, which boosts IRR, but it raises leverage and default risk.</p>"],
+["LBO","b","How is an LBO analysis used as a valuation method?","<p>Work backward from the sponsor's target IRR, often 20 to 25%, to find the maximum price a financial buyer could pay. That sets a floor on what a strategic buyer would need to offer.</p>"]
+];
+
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const store={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+
+const coreBank=CORE.map((r,i)=>({id:"c"+i,cat:r[0],diff:r[1],q:r[2],a:r[3],html:true}));
+let mine=store.get("ibd.mine",[]);
+let S={deck:store.get("ibd.deck","core"),cats:null,mode:"all",order:[],idx:0,flipped:false};
+let prog=store.get("ibd.prog",{});
+
+function bank(){return S.deck==="core"?coreBank:mine}
+function catsOf(b){const m=new Map();b.forEach(x=>m.set(x.cat,(m.get(x.cat)||0)+1));return m}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+
+function filtered(){
+  return bank().filter(x=>S.cats.has(x.cat)&&(
+    S.mode==="all"||(S.mode==="unseen"&&!prog[x.id])||(S.mode==="review"&&prog[x.id]==="review")||(S.mode==="adv"&&x.diff==="a")));
+}
+function rebuild(doShuffle=true){
+  const f=filtered().map(x=>x.id);
+  S.order=doShuffle?shuffle(f):f; S.idx=0; S.flipped=false; render();
+}
+function renderChips(){
+  const m=catsOf(bank()); if(!S.cats)S.cats=new Set(m.keys());
+  $("chips").innerHTML="";
+  const all=document.createElement("button");all.className="chip";all.textContent="All";
+  all.setAttribute("aria-pressed",S.cats.size===m.size);
+  all.onclick=()=>{S.cats=new Set(m.keys());renderChips();rebuild()};
+  $("chips").append(all);
+  const gEl=$("groups");gEl.innerHTML="";
+  const groups=[...new Set(bank().map(x=>x.group).filter(Boolean))];
+  gEl.hidden=groups.length<2;
+  groups.forEach(g=>{const cs=new Set(bank().filter(x=>x.group===g).map(x=>x.cat));
+    const b=document.createElement("button");b.className="chip";b.textContent=g;
+    b.setAttribute("aria-pressed",cs.size===S.cats.size&&[...cs].every(c=>S.cats.has(c)));
+    b.onclick=()=>{S.cats=cs;renderChips();rebuild()};gEl.append(b)});
+  m.forEach((n,c)=>{const b=document.createElement("button");b.className="chip";
+    b.innerHTML=esc(c)+"<small>"+n+"</small>";
+    b.setAttribute("aria-pressed",S.cats.has(c)&&S.cats.size!==m.size);
+    b.onclick=()=>{ if(S.cats.size===m.size)S.cats=new Set([c]); else if(S.cats.has(c)){S.cats.delete(c);if(!S.cats.size)S.cats=new Set(m.keys())} else S.cats.add(c);
+      renderChips();rebuild()};
+    $("chips").append(b)});
+}
+function render(){
+  const b=bank();
+  $("deckCore").setAttribute("aria-pressed",S.deck==="core");$("deckMine").setAttribute("aria-pressed",S.deck==="mine");
+  $("deckLine").textContent=S.deck==="core"?`Starter bank · ${b.length} original questions`:`My bank · ${b.length} questions loaded`;
+  const card=$("card");
+  if(!b.length){
+    $("cTag").textContent="My bank";$("cMeta").textContent="";
+    $("cQ").textContent="No questions loaded yet";$("cA").hidden=false;
+    $("cA").innerHTML="<p>Open <b>Load your copy of the 400 questions</b> below and choose your guide PDF.</p>";$("cHint").hidden=true;
+    $("stateBar").className="state";$("counter").textContent="0 / 0";$("importBox").open=true;renderLedger();return;
+  }
+  if(!S.order.length){
+    $("cTag").textContent="";$("cMeta").textContent="";$("cQ").textContent="Nothing matches this filter";$("cA").hidden=false;
+    $("cA").innerHTML="<p>Switch <b>Show</b> back to All questions, or pick more sections.</p>";$("cHint").hidden=true;
+    $("stateBar").className="state";$("counter").textContent="0 / 0";renderLedger();return;
+  }
+  const x=b.find(y=>y.id===S.order[S.idx]);
+  $("cTag").textContent=x.cat;
+  $("cMeta").innerHTML=(x.diff?`<span class="diff ${x.diff==="a"?"adv":""}">${x.diff==="a"?"Advanced":"Basic"}</span>`:"");
+  $("cQ").textContent=x.q;
+  $("cA").innerHTML=x.html?x.a:x.a.split(/\n+/).map(p=>"<p>"+esc(p)+"</p>").join("");
+  $("cA").hidden=!S.flipped;$("cHint").hidden=S.flipped;
+  $("stateBar").className="state "+(prog[x.id]||"");
+  $("counter").textContent=`${S.idx+1} / ${S.order.length}`;
+  renderLedger();
+}
+function renderLedger(){
+  const b=bank().filter(x=>S.cats.has(x.cat)),n=b.length||1;
+  const k=b.filter(x=>prog[x.id]==="known").length,r=b.filter(x=>prog[x.id]==="review").length,u=b.length-k-r;
+  $("bar").innerHTML=`<i style="width:${k/n*100}%;background:var(--good)"></i><i style="width:${r/n*100}%;background:var(--warn)"></i>`;
+  $("legend").innerHTML=`<span><span class="dot" style="background:var(--good)"></span>Got it <b>${k}</b></span><span><span class="dot" style="background:var(--warn)"></span>Review <b>${r}</b></span><span><span class="dot" style="background:var(--rule)"></span>Not rated <b>${u}</b></span>`;
+}
+function flip(){if(!S.order.length)return;S.flipped=!S.flipped;render()}
+function move(d){if(!S.order.length)return;S.idx=(S.idx+d+S.order.length)%S.order.length;S.flipped=false;render()}
+function rate(v){if(!S.order.length)return;prog[S.order[S.idx]]=v;store.set("ibd.prog",prog);
+  if(S.mode==="unseen"||(S.mode==="review"&&v==="known")){S.order.splice(S.idx,1);if(S.idx>=S.order.length)S.idx=0;S.flipped=false;render()} else move(1)}
+function setDeck(d){S.deck=d;store.set("ibd.deck",d);S.cats=null;renderChips();rebuild()}
+
+function parseImport(t){
+  t=t.replace(/\r/g,"");const out=[];
+  const lines=t.split("\n").filter(l=>l.trim());
+  if(lines.length&&lines.every(l=>l.includes("\t"))){
+    lines.forEach(l=>{const c=l.split("\t").map(s=>s.trim());
+      if(c.length>=3&&c[1]&&c[2])out.push({cat:c[0]||"General",q:c[1],a:c.slice(2).join(" ")});
+      else if(c.length===2&&c[0]&&c[1])out.push({cat:"General",q:c[0],a:c[1]})});
+    return out;
+  }
+  let cat="General",cur=null,field=null;
+  const push=()=>{if(cur&&cur.q&&cur.a)out.push({cat,q:cur.q.trim(),a:cur.a.trim()});cur=null;field=null};
+  t.split("\n").forEach(raw=>{const l=raw.trim();
+    let m;
+    if(m=l.match(/^(section|category|topic)\s*:\s*(.+)$/i)){push();cat=m[2].trim();return}
+    if(m=l.match(/^(?:q|question)(?:\s*\d+)?\s*[:.)]\s*(.*)$/i)){push();cur={q:m[1],a:""};field="q";return}
+    if(m=l.match(/^(?:a|answer)\s*[:.)]\s*(.*)$/i)){if(cur){cur.a=m[1];field="a"}return}
+    if(!l){if(field==="a")cur.a+="\n";return}
+    if(cur&&field)cur[field]+=(field==="a"&&cur.a&&!cur.a.endsWith("\n")?" ":field==="q"?" ":"")+l;
+  });
+  push();return out;
+}
+// pages: [[{s,x,y,w,h}]] with y measured upward from page bottom (pdf.js convention)
+function parseGuide(pages){
+  const lines=[];
+  pages.forEach((items,pi)=>{
+    items=items.filter(i=>i.s&&i.s.trim()).sort((a,b)=>b.y-a.y||a.x-b.x);
+    const pl=[];
+    items.forEach(it=>{
+      let L=pl.find(l=>Math.abs(l.y-it.y)<Math.max(2,it.h*0.45));
+      if(!L){L={y:it.y,h:it.h,parts:[]};pl.push(L)}
+      L.parts.push(it);L.h=Math.max(L.h,it.h);
+    });
+    pl.forEach(L=>{
+      L.parts.sort((a,b)=>a.x-b.x);
+      let t="",end=null;
+      L.parts.forEach(p=>{
+        if(end!==null&&p.x-end>L.h*0.18&&!t.endsWith(" ")&&!p.s.startsWith(" "))t+=" ";
+        t+=p.s;end=p.x+p.w;
+      });
+      L.text=t.replace(/\s+/g," ").trim();L.x=L.parts[0].x;L.page=pi;
+    });
+    pl.sort((a,b)=>b.y-a.y);
+    const cnt={};pl.filter(l=>l.text.length>25).forEach(l=>{const k=Math.round(l.x);cnt[k]=(cnt[k]||0)+1});
+    let margin=0,best=0;for(const k in cnt)if(cnt[k]>best||cnt[k]===best&&+k<margin){best=cnt[k];margin=+k}
+    pl.forEach((l,i)=>{l.margin=margin;l.gap=i?pl[i-1].y-l.y:0;lines.push(l)});
+  });
+  const out=[];let sec=null,diff="",expect=null,cur=null;
+  const H=/^(.+?)\s+(?:Questions\s+)?&\s+(?:Suggested\s+)?Answers(?:\s*[–-]\s*(Basic|Advanced))?$/;
+  const finish=()=>{if(cur&&!cur.a.length){const k=cur.q.search(/\?["”]?\s+(?=["“A-Z])/);if(k>0){const e=cur.q.indexOf(" ",k);cur.a=[cur.q.slice(e+1)];cur.q=cur.q.slice(0,e)}}
+    if(cur&&cur.q&&cur.a.length)out.push({n:cur.n,cat:sec,diff,q:cur.q.trim(),a:cur.a.map(p=>p.trim()).filter(Boolean).join("\n")});cur=null};
+  lines.forEach(l=>{
+    const t=l.text;
+    if(!t||/^\d{1,3}$/.test(t)||/breakingintowallstreet|mergersandinquisitions/i.test(t)||/\.{5,}/.test(t))return;
+    const brk=l.gap>l.h*1.9;
+    let m;
+    if(t.length<90&&((m=t.match(H))||/^Discussing Transaction Experience$/.test(t))){
+      finish();
+      if(m){sec=m[1].replace(/[“”"]/g,"").trim();diff=m[2]==="Advanced"?"a":m[2]==="Basic"?"b":"";}
+      else{sec="Transaction Experience";diff=""}
+      if(/^Restructuring/.test(sec))sec="Restructuring / Distressed M&A";
+      if(sec==="Technical"||sec==="Questions")sec=null;
+      expect=null;return;
+    }
+    if(sec&&(m=t.match(/^(\d{1,2})\.\s+(\S.*)$/))&&l.x-l.margin<4&&(expect===null||+m[1]===expect)){
+      finish();cur={n:+m[1],q:m[2],a:[],inQ:true};expect=+m[1]+1;return;
+    }
+    if(!cur)return;
+    if(cur.inQ){
+      if(brk||(l.page!==cur.lastPage&&/[?.:]["”]?$/.test(cur.q.trim()))){cur.inQ=false;cur.a.push(t)}
+      else cur.q+=" "+t;
+    } else {
+      if(brk)cur.a.push(t);else cur.a[cur.a.length-1]+=(cur.a[cur.a.length-1].endsWith("-")?"":" ")+t;
+    }
+    cur.lastPage=l.page;
+  });
+  finish();
+  return out;
+}
+
+const FIT=new Set(["Analytical / Attention to Detail","Background / Personal","Career Changer","Commitment","Culture","Future","Strengths / Weaknesses","Team / Leadership","Understanding Banking","Warren Buffett","Why Banking?","Failure","Outside the Box"]);
+const groupOf=c=>FIT.has(c)?"Fit":/Transaction|Restructuring/.test(c)?"Deals & restructuring":"Technical";
+function loadScript(src){return new Promise((ok,no)=>{const s=document.createElement("script");s.src=src;s.onload=ok;s.onerror=()=>no(new Error("load"));document.head.append(s)})}
+async function getPdfjs(){
+  if(window.pdfjsLib)return window.pdfjsLib;
+  const base="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/";
+  await loadScript(base+"pdf.min.js");await loadScript(base+"pdf.worker.min.js");
+  window.pdfjsLib.GlobalWorkerOptions.workerSrc=base+"pdf.worker.min.js";
+  return window.pdfjsLib;
+}
+function pdfStatus(t,err){$("pdfStatus").textContent=t;$("pdfStatus").style.color=err?"var(--warn)":""}
+$("pdfFile").onchange=async e=>{
+  const f=e.target.files[0];if(!f)return;
+  try{
+    pdfStatus("Opening the PDF…");$("pdfMeter").hidden=false;$("pdfMeterFill").style.width="2%";
+    const lib=await getPdfjs();
+    const doc=await lib.getDocument({data:new Uint8Array(await f.arrayBuffer())}).promise;
+    const pages=[];
+    for(let i=1;i<=doc.numPages;i++){
+      const tc=await (await doc.getPage(i)).getTextContent();
+      pages.push(tc.items.filter(it=>it.str).map(it=>({s:it.str,x:it.transform[4],y:it.transform[5],w:it.width,h:it.height||Math.hypot(it.transform[2],it.transform[3])||10})));
+      if(i%8===0||i===doc.numPages){pdfStatus(`Reading page ${i} of ${doc.numPages}…`);$("pdfMeterFill").style.width=(i/doc.numPages*100)+"%";await new Promise(r=>setTimeout(r))}
+    }
+    const items=parseGuide(pages);
+    if(items.length<20){pdfStatus("I couldn't find numbered questions in that PDF. Try pasting them below instead.",true);return}
+    mine=items.map(x=>({id:"g:"+x.cat+":"+x.diff+":"+x.n,cat:x.cat,diff:x.diff,q:x.q,a:x.a,group:groupOf(x.cat)}));
+    store.set("ibd.mine",mine);
+    pdfStatus(`Loaded ${items.length} questions from ${new Set(items.map(x=>x.cat)).size} sections.`);
+    $("importBox").open=false;S.cats=null;setDeck("mine");
+  }catch(err){pdfStatus("That file couldn't be read. Check that it's the PDF itself and not a shortcut, then try again.",true)}
+  finally{e.target.value=""}
+};
+$("doImport").onclick=()=>{
+  const items=parseImport($("importText").value);
+  if(!items.length){$("importMsg").className="msg err";$("importMsg").textContent="No questions found. Check that each one has a Q: line and an A: line.";return}
+  const start=mine.length;
+  mine=mine.concat(items.map((x,i)=>({id:"m"+Date.now().toString(36)+"_"+(start+i),cat:x.cat,q:x.q,a:x.a,diff:""})));
+  store.set("ibd.mine",mine);$("importText").value="";
+  $("importMsg").className="msg";$("importMsg").textContent=`Loaded ${items.length} questions into My 400.`;
+  setDeck("mine");
+};
+$("clearMine").onclick=()=>{mine=[];store.set("ibd.mine",mine);$("importMsg").className="msg";$("importMsg").textContent="My bank is empty.";if(S.deck==="mine")setDeck("mine")};
+$("deckCore").onclick=()=>setDeck("core");$("deckMine").onclick=()=>setDeck("mine");
+$("card").onclick=flip;$("prev").onclick=()=>move(-1);$("next").onclick=()=>move(1);
+$("btnKnown").onclick=()=>rate("known");$("btnReview").onclick=()=>rate("review");
+$("shuffle").onclick=()=>rebuild(true);
+$("mode").onchange=e=>{S.mode=e.target.value;rebuild()};
+$("reset").onclick=()=>{$("resetConfirm").hidden=false};
+$("resetNo").onclick=()=>{$("resetConfirm").hidden=true};
+$("resetYes").onclick=()=>{bank().forEach(x=>delete prog[x.id]);store.set("ibd.prog",prog);$("resetConfirm").hidden=true;rebuild()};
+document.addEventListener("keydown",e=>{
+  if(/TEXTAREA|SELECT|INPUT/.test(e.target.tagName))return;
+  if(e.key===" "||e.key==="Enter"){if(e.target.tagName==="BUTTON"&&e.key==="Enter")return;e.preventDefault();flip()}
+  else if(e.key==="ArrowRight")move(1);else if(e.key==="ArrowLeft")move(-1);
+  else if(e.key==="1")rate("review");else if(e.key==="2")rate("known");
+  else if(e.key.toLowerCase()==="s")rebuild(true);
+});
+renderChips();rebuild(true);
+</script>
+
+<script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}))}</script>
+</body>
+</html>
